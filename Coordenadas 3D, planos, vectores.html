@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ejercicio 3 vectores, 3 planos</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.min.js"></script>
+    <script>
+		var startTime = Date.now();
+		var scene, aspect, camera, renderer;
+		
+		init ();
+		animate();
+		function init(){
+        scene = new THREE.Scene();
+		//var axesHelper = new THREE.AxesHelper(5);
+		//scene.add(axesHelper);
+		//var dir = new THREE.Vector3( -1, -1, 0 );
+		//dir.normalize();
+        aspect = window.innerWidth / window.innerHeight;
+        camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000);
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+		
+		
+		var size = 10;
+		var arrowSize = 4;
+		var divisions = size;
+        var origin = new THREE.Vector3( 0, 0, 0 );
+		var x = new THREE.Vector3( 1, 0, 0 );
+		var y = new THREE.Vector3( 0, 1, 0 );
+		var z = new THREE.Vector3( 0, 0, 1 );
+		var colorR = new THREE.Color( 0xAA3333 );
+		var colorG = new THREE.Color( 0x33AA33 );
+		var colorB = new THREE.Color( 0x333366 );
+		
+		
+        
+		
+		
+		//Vectores
+		 var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+		 var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+		 var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+		
+		
+		//Planos
+			//1
+		var plane1 = new THREE.Plane( x, 0 );
+		var helper1 = new THREE.PlaneHelper( plane1, 1.9, colorG );
+		camera.position.z =  5;
+       
+			//2
+		var plane2 = new THREE.Plane( y, 0 );
+		var helper2 = new THREE.PlaneHelper( plane2, 1.9, colorB );
+
+      
+		   //3
+		var plane3 = new THREE.Plane( z, 0 );
+		var helper3 = new THREE.PlaneHelper( plane3, 1.9, colorR );
+
+        
+		
+		
+        
+		//Agregar a escena
+		scene.add( arrowX );	
+		scene.add( arrowY );	
+	  	scene.add( arrowZ );
+		scene.add( helper1 );
+		scene.add( helper2 );
+		scene.add( helper3 );
+		}
+		
+		
+		function animate(){
+			render();
+			requestAnimationFrame( animate );
+		}
+		
+        function render(){
+		var dtime = Date.now()-startTime;
+        camera.position.x = 5*Math.pow(Math.cos(dtime/10000),2);
+        camera.position.y = 5*Math.pow(Math.cos(dtime/10000),2);
+        camera.lookAt( 0, 0, 0 );
+        renderer.render( scene, camera );
+        };
+        
+    </script>
+  </body>
+</html>
