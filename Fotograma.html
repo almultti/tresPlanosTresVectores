@@ -1,0 +1,215 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>Pez-Nemo</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.js"></script>
+	<script>
+		var scene, aspect, camera, renderer;
+		var startTime = Date.now();
+		
+		init();
+		render();
+	
+		function init(){
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0xB059EC );
+			aspect = window.innerWidth / window.innerHeight;
+			camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+				  
+			var size = 10;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA3333 );
+		  	var colorG = new THREE.Color( 0x33AA33 );
+		  	var colorB = new THREE.Color( 0x333366 );
+		  
+		  	//CREAR LAS GRILLAS PARA EL ESCENARIO
+		  	var axesHelper = new THREE.AxesHelper( size );
+		  	var gridHelperXY = new THREE.GridHelper( size, divisions, color1, color1);
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		  	var gridHelperYZ = new THREE.GridHelper( size, divisions, color2, color2 );
+            
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+            gridHelperYZ.rotateOnWorldAxis ( z, THREE.Math.degToRad(90) );
+            
+            //CREAR LAS FLECHAS QUE INDICAN LOS EJES DE COORDENADAS 3D
+            var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+            var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+            var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+			
+			//CREAR LAS GEOMETRÍAS
+            //Linea
+			var geoLinea = new THREE.Geometry();
+			geoLinea.vertices.push(new THREE.Vector3( -2.5,  3.0,  0.0 ) );
+			geoLinea.vertices.push(new THREE.Vector3(  1.0,  2.0,  0.0 ) );
+            
+			//Circulo
+			var geoCirculo = new THREE.CircleGeometry( 0.5, 32 );
+			var geoCirculo2 = new THREE.CircleGeometry( 0.2, 32 );
+			//Curvas Bezier
+			var curve1 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( 3, 1, 0 ),
+                new THREE.Vector3( 0, 2.7, 0 ),
+				new THREE.Vector3( -3, 3, 0 ),
+				new THREE.Vector3( -3.2, 0, 0 )
+            );
+			var curve2 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 3, 0, 0 ),
+               new THREE.Vector3( 0, -0.4, 0 ),
+			   new THREE.Vector3( -2, -0.8, 0 ),
+			   new THREE.Vector3( -3.2, 0, 0 )
+            );
+
+			
+			var pointGeometry = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point = curve1.getPoint( i/20 );
+                pointGeometry.vertices.push( point );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point = curve2.getPoint( i/20 );
+                pointGeometry.vertices.push( point );
+            }
+			
+			
+			var pointMaterial = new THREE.PointsMaterial( { color: 0xECAD59 } );
+            var curvePoints = new THREE.Points( pointGeometry, pointMaterial );
+            pointGeometry.computeFaceNormals();
+            pointGeometry.computeVertexNormals();
+			
+			//Curvas Bezier 2
+			var curve3 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( 5, 4, 0 ),
+                new THREE.Vector3( 0, 3.7, 0 ),
+            );
+			var curve4 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 5, 0, 0 ),
+               new THREE.Vector3( 0, -2, 0 ),
+            );
+
+			
+			var pointGeometry2 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point2 = curve3.getPoint( i/20 );
+                pointGeometry2.vertices.push( point );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point2 = curve4.getPoint( i/20 );
+                pointGeometry2.vertices.push( point );
+            }
+			
+			
+			var pointMaterial2 = new THREE.PointsMaterial( { color: 0xECAD59 } );
+            var curvePoints2 = new THREE.Points( pointGeometry2, pointMaterial2 );
+            pointGeometry2.computeFaceNormals();
+            pointGeometry2.computeVertexNormals();
+			
+			
+			//Plano
+            var geoPlano = new THREE.PlaneGeometry( 1, 1 );
+			
+            //Triangulo
+            var geoTriangulo = new THREE.Geometry();
+            var v1 = new THREE.Vector3(  0.5,  0.7,  0.0 );
+            var v2 = new THREE.Vector3(  0.0, -0.5,  0.0 );
+            var v3 = new THREE.Vector3( -1.0, 0.0,  0.0 );
+            geoTriangulo.vertices.push( v1 );
+            geoTriangulo.vertices.push( v2 );
+            geoTriangulo.vertices.push( v3 );
+            geoTriangulo.faces.push( new THREE.Face3( 0, 1, 2 ) );
+            geoTriangulo.computeFaceNormals();
+			
+			//Triangulo2
+			var geoTriangulo2 = new THREE.Geometry();
+            var v1 = new THREE.Vector3(  0.5,  0.7,  0.0 );
+            var v2 = new THREE.Vector3(  0.0, -0.5,  0.0 );
+            var v3 = new THREE.Vector3( -1.0, 0.0,  0.0 );
+			var v4 = new THREE.Vector3( -1.0, 2,  0.0 );
+            geoTriangulo2.vertices.push( v1 );
+            geoTriangulo2.vertices.push( v2 );
+            geoTriangulo2.vertices.push( v3 );
+			geoTriangulo2.vertices.push( v4 );
+            geoTriangulo2.faces.push( new THREE.Face3( 0, 1, 2, 3 ) );
+            geoTriangulo2.computeFaceNormals();
+			
+            //Anillo
+            var geoAnillo = new THREE.RingGeometry( 0.02, 0.1, 32 );
+			
+			//CREAR LOS MATERIALES
+			var matNaranja = new THREE.LineBasicMaterial( { color: 0xEE7321 } );
+			var matNaranjaOs = new THREE.LineBasicMaterial( { color: 0xA74300 } );
+			var matBlanco = new THREE.MeshBasicMaterial( { color: color1 } );
+			var matCurvaBezier = new THREE.MeshBasicMaterial( { color: 0xF8841A, side: THREE.DoubleSide } );
+			var matPlano = new THREE.MeshBasicMaterial( { color: 0xFF5360, side: THREE.DoubleSide } );
+			
+			//CREAR LOS OBJETOS
+			var linea = new THREE.Line( geoLinea, matNaranja );
+			var plano = new THREE.Mesh( geoPlano, matPlano );
+            var triangulo = new THREE.Mesh( geoTriangulo, matPlano );
+			var triangulo2 = new THREE.Mesh( geoTriangulo2, matPlano );
+			var circulo = new THREE.Mesh( geoCirculo, matBlanco );
+			var circulo2 = new THREE.Mesh( geoCirculo2, matNaranja );
+            var anillo = new THREE.Mesh( geoAnillo, matNaranjaOs );
+			var curvaBezier = new THREE.Mesh( pointGeometry, matCurvaBezier );
+			
+			
+			//ROTAR LOS OBJETOS
+			circulo.position.x = -2;
+			circulo.position.y = 0.8;
+			circulo.position.z = 1.5;
+			circulo2.position.x = -1.9;
+			circulo2.position.y = 0.9;
+			circulo2.position.z = 1.7;
+            plano.position.x = 3.5;
+            plano.position.y = 0.5;
+			plano.position.z = -0.05;
+            anillo.position.x = -1.9;
+            anillo.position.y = 0.9;
+			anillo.position.z = 1.72;
+			triangulo2.position.y = -3.5;
+			curvaBezier.position.z = 1;
+		  
+		  	//AGREGAR A LA ESCENA
+		  	scene.add( gridHelperXY );	
+		  	scene.add( arrowX );	
+		  	scene.add( arrowY );	
+		  	scene.add( arrowZ );			
+			//scene.add( linea );
+            scene.add( plano );
+            scene.add( triangulo );
+			//scene.add( triangulo2 );
+            scene.add( anillo );
+			scene.add( curvaBezier );
+			//scene.add( curvePoints );
+			scene.add( circulo );
+			scene.add( circulo2 );
+			scene.add( plano );
+		  	camera.position.z =  15;
+			
+		  	camera.lookAt( origin );
+			}
+		
+		function render(){
+			renderer.render( scene, camera );
+		}
+    </script>
+  </body>
+</html>
