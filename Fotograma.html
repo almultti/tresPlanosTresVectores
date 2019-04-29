@@ -75,7 +75,6 @@
 			   new THREE.Vector3( -2, -0.8, 0 ),
 			   new THREE.Vector3( -3.2, 0, 0 )
             );
-
 			
 			var pointGeometry = new THREE.Geometry();
             for(var i=0; i<20; i++){
@@ -87,50 +86,139 @@
                 var point = curve2.getPoint( i/20 );
                 pointGeometry.vertices.push( point );
             }
-			
-			
-			var pointMaterial = new THREE.PointsMaterial( { color: 0xECAD59 } );
-            var curvePoints = new THREE.Points( pointGeometry, pointMaterial );
-            pointGeometry.computeFaceNormals();
-            pointGeometry.computeVertexNormals();
-			
-			//Curvas Bezier 2
+			//geometry2
 			var curve3 = new THREE.CubicBezierCurve3(
-				new THREE.Vector3( 5, 4, 0 ),
-                new THREE.Vector3( 0, 3.7, 0 ),
+                new THREE.Vector3( -1, 0.5, 0 ),
+                new THREE.Vector3( 0, 0.5, 0 ),
+                new THREE.Vector3( 1, 1.5, 0 ),
+                new THREE.Vector3( 0.9, 0.5, 0),
+				
             );
 			var curve4 = new THREE.CubicBezierCurve3(
-               new THREE.Vector3( 5, 0, 0 ),
-               new THREE.Vector3( 0, -2, 0 ),
+               new THREE.Vector3( -1, -0.5, 0 ),
+			   new THREE.Vector3( 0, -0.5, 0 ),
+			   new THREE.Vector3( 1, -1.5, 0 ),
+			   new THREE.Vector3( 0.9, -0.5, 0 )
             );
-
 			
 			var pointGeometry2 = new THREE.Geometry();
             for(var i=0; i<20; i++){
                 var point2 = curve3.getPoint( i/20 );
-                pointGeometry2.vertices.push( point );
+                pointGeometry2.vertices.push( point2 );
             }
             
             for(var i=0; i<20; i++){
                 var point2 = curve4.getPoint( i/20 );
-                pointGeometry2.vertices.push( point );
+                pointGeometry2.vertices.push( point2 );
+            }
+			
+			//geometry3
+			var curve5 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( 0.4, 0.8, 0 ),
+                new THREE.Vector3( 1.5, 1.3, 0 ),
+                new THREE.Vector3( 1.7, 1, 0 ),
+                new THREE.Vector3( 1.8, 0.8, 0),
+				
+            );
+			var curve6 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 0.8, 0.4, 0 ),
+			   new THREE.Vector3( 1.2, 0, 0 ),
+			   new THREE.Vector3( 1.6, 0.4, 0 ),
+			   new THREE.Vector3( 1.8, 0.6, 0 )
+            );
+			
+			var pointGeometry3 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point3 = curve5.getPoint( i/20 );
+                pointGeometry3.vertices.push( point3 );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point3 = curve6.getPoint( i/20 );
+                pointGeometry3.vertices.push( point3 );
             }
 			
 			
-			var pointMaterial2 = new THREE.PointsMaterial( { color: 0xECAD59 } );
-            var curvePoints2 = new THREE.Points( pointGeometry2, pointMaterial2 );
-            pointGeometry2.computeFaceNormals();
+			var pointMaterial = new THREE.PointsMaterial( { color: 0xECAD59 } );
+			var pointMaterial2 = new THREE.PointsMaterial( { color: 0x283747 } );
+            var curvePoints = new THREE.Points( pointGeometry, pointMaterial );
+			var curvePoints2 = new THREE.Points( pointGeometry2, pointMaterial );
+			var curvePoints3 = new THREE.Points( pointGeometry3, pointMaterial2 );
+			
+            for(var i=0; i<19; i++){
+                var face1 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry.faces.push( face1 );
+                var face2 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry.faces.push( face2 );
+            }
+			 for(var i=0; i<19; i++){
+                var face3 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry2.faces.push( face3 );
+                var face4 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry2.faces.push( face4 );
+            }
+			for(var i=0; i<19; i++){
+                var face5 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry3.faces.push( face5 );
+                var face6 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry3.faces.push( face6 );
+            }
+			
+			
+            pointGeometry.computeFaceNormals();
+			pointGeometry2.computeFaceNormals();
+			pointGeometry3.computeFaceNormals();
+            pointGeometry.computeVertexNormals();
             pointGeometry2.computeVertexNormals();
+			pointGeometry3.computeVertexNormals();
+			
 			
 			
 			//Plano
-            var geoPlano = new THREE.PlaneGeometry( 1, 1 );
+            var geoPlano = new THREE.PlaneGeometry( 2, 1 );
+			
+			//CatmullRom
+			var curve2D = new THREE.CatmullRomCurve3( [
+                new THREE.Vector3( 0.2, 0.1, 1 ),
+                new THREE.Vector3( 0.4, 0.2, 1 ),
+                new THREE.Vector3( 0.6, 0.6, 1 ),
+                new THREE.Vector3( 0.5, 1, 1 ),
+                new THREE.Vector3( 0.4, 1.2, 1 ),
+                new THREE.Vector3( 0.3, 1.3, 1 )
+                
+            ] );
+			
+			var curve2D2 = new THREE.CatmullRomCurve3( [
+                new THREE.Vector3( 0.5, 0.08, 1 ),
+				new THREE.Vector3( 0.7, 0.2, 1 ),
+                new THREE.Vector3( 0.8, 0.4, 1 ),
+                new THREE.Vector3( 0.85, 0.6, 1 ),
+                new THREE.Vector3( 0.8, 0.8, 1 ),
+                new THREE.Vector3( 0.7, 1.0, 1 ),
+                new THREE.Vector3( 0.6, 1.35, 1 )
+                
+            ] );
+			var material = new THREE.LineBasicMaterial( { color : color2 } );
+			var resolution = 10;
+            var points = curve2D.getPoints( resolution );
+			var points2 = curve2D2.getPoints( resolution );
+            var geometry = new THREE.BufferGeometry().setFromPoints( points );
+			var geometry2 = new THREE.BufferGeometry().setFromPoints( points2 );
+			var curveObject = new THREE.Line( geometry , material );
+			var curveObject2 = new THREE.Line( geometry2 , material );
+			curveObject.position.z = 7 ;
+			curveObject.position.x = -1.2 ;
+			curveObject.position.y = -0.3 ;
+			curveObject2.position.z = 7 ;
+			curveObject2.position.x = -1.3 ;
+			curveObject2.position.y = -0.3 ;
+			
 			
             //Triangulo
             var geoTriangulo = new THREE.Geometry();
-            var v1 = new THREE.Vector3(  0.5,  0.7,  0.0 );
+            var v1 = new THREE.Vector3(  0.0,  0.0,  0.0 );
             var v2 = new THREE.Vector3(  0.0, -0.5,  0.0 );
-            var v3 = new THREE.Vector3( -1.0, 0.0,  0.0 );
+            var v3 = new THREE.Vector3( -2.3, 0.0,  0.0 );
             geoTriangulo.vertices.push( v1 );
             geoTriangulo.vertices.push( v2 );
             geoTriangulo.vertices.push( v3 );
@@ -139,16 +227,25 @@
 			
 			//Triangulo2
 			var geoTriangulo2 = new THREE.Geometry();
-            var v1 = new THREE.Vector3(  0.5,  0.7,  0.0 );
-            var v2 = new THREE.Vector3(  0.0, -0.5,  0.0 );
-            var v3 = new THREE.Vector3( -1.0, 0.0,  0.0 );
-			var v4 = new THREE.Vector3( -1.0, 2,  0.0 );
+            var v1 = new THREE.Vector3(  0.0,  0.0,  0.0 );
+            var v2 = new THREE.Vector3(  0.0, 0.5,  0.0 );
+            var v3 = new THREE.Vector3( -2.3, 0.0,  0.0 );
             geoTriangulo2.vertices.push( v1 );
             geoTriangulo2.vertices.push( v2 );
             geoTriangulo2.vertices.push( v3 );
-			geoTriangulo2.vertices.push( v4 );
-            geoTriangulo2.faces.push( new THREE.Face3( 0, 1, 2, 3 ) );
+            geoTriangulo2.faces.push( new THREE.Face3( 0, 1, 2) );
             geoTriangulo2.computeFaceNormals();
+			
+			//Triangulo3
+			var geoTriangulo3 = new THREE.Geometry();
+            var v1 = new THREE.Vector3(  0.0,  0.0,  0.0 );
+            var v2 = new THREE.Vector3(  0.0, 0.5,  0.0 );
+            var v3 = new THREE.Vector3( -2.3, 0.0,  0.0 );
+            geoTriangulo3.vertices.push( v1 );
+            geoTriangulo3.vertices.push( v2 );
+            geoTriangulo3.vertices.push( v3 );
+            geoTriangulo3.faces.push( new THREE.Face3( 0, 1, 2) );
+            geoTriangulo3.computeFaceNormals();
 			
             //Anillo
             var geoAnillo = new THREE.RingGeometry( 0.02, 0.1, 32 );
@@ -157,18 +254,21 @@
 			var matNaranja = new THREE.LineBasicMaterial( { color: 0xEE7321 } );
 			var matNaranjaOs = new THREE.LineBasicMaterial( { color: 0xA74300 } );
 			var matBlanco = new THREE.MeshBasicMaterial( { color: color1 } );
-			var matCurvaBezier = new THREE.MeshBasicMaterial( { color: 0xF8841A, side: THREE.DoubleSide } );
-			var matPlano = new THREE.MeshBasicMaterial( { color: 0xFF5360, side: THREE.DoubleSide } );
+			var matCurvaBezier = new THREE.MeshBasicMaterial( { color: 0xFF9F20, side: THREE.DoubleSide } );
+			var matPlano = new THREE.MeshBasicMaterial( { color: 0xFFB452, side: THREE.DoubleSide } );
 			
 			//CREAR LOS OBJETOS
 			var linea = new THREE.Line( geoLinea, matNaranja );
 			var plano = new THREE.Mesh( geoPlano, matPlano );
             var triangulo = new THREE.Mesh( geoTriangulo, matPlano );
 			var triangulo2 = new THREE.Mesh( geoTriangulo2, matPlano );
+			var triangulo3 = new THREE.Mesh( geoTriangulo3, matPlano );
 			var circulo = new THREE.Mesh( geoCirculo, matBlanco );
 			var circulo2 = new THREE.Mesh( geoCirculo2, matNaranja );
             var anillo = new THREE.Mesh( geoAnillo, matNaranjaOs );
 			var curvaBezier = new THREE.Mesh( pointGeometry, matCurvaBezier );
+			var curvaBezier2 = new THREE.Mesh( pointGeometry2, matCurvaBezier );
+			var curvaBezier3 = new THREE.Mesh( pointGeometry3, matPlano );
 			
 			
 			//ROTAR LOS OBJETOS
@@ -178,30 +278,51 @@
 			circulo2.position.x = -1.9;
 			circulo2.position.y = 0.9;
 			circulo2.position.z = 1.7;
-            plano.position.x = 3.5;
+            plano.position.x = 4;
             plano.position.y = 0.5;
-			plano.position.z = -0.05;
+			plano.position.z = 0.1;
             anillo.position.x = -1.9;
             anillo.position.y = 0.9;
 			anillo.position.z = 1.72;
-			triangulo2.position.y = -3.5;
-			curvaBezier.position.z = 1;
-		  
+			triangulo3.position.x = 0.1;
+			triangulo3.position.y = 3;
+			triangulo3.position.z = 0.1;
+			triangulo2.position.x = 5;
+			triangulo2.position.y = 1;
+			triangulo2.position.z = 0.1;
+			triangulo.position.x = 5;
+			triangulo.position.z = 0.1;
+			curvaBezier.position.z = 0.1;
+			curvaBezier2.position.y = 0.5;
+			curvaBezier2.position.z = 0.09;
+			curvaBezier2.position.x = 4;
+			curvaBezier3.position.y = -1;
+			curvaBezier3.position.z = 0.3;
+			curvaBezier3.position.x = -0.85;
+			curvePoints2.position.y = 0.5;
+			curvePoints2.position.z = 0.09;
+			curvePoints2.position.x = 4;
+			curvePoints3.position.y = -3;
+			
 		  	//AGREGAR A LA ESCENA
+			scene.add( curveObject );
+			scene.add( curveObject2 );
 		  	scene.add( gridHelperXY );	
 		  	scene.add( arrowX );	
 		  	scene.add( arrowY );	
 		  	scene.add( arrowZ );			
 			//scene.add( linea );
-            scene.add( plano );
-            scene.add( triangulo );
+            //scene.add( plano );
+            //scene.add( triangulo );
 			//scene.add( triangulo2 );
             scene.add( anillo );
 			scene.add( curvaBezier );
-			//scene.add( curvePoints );
+			scene.add( curvaBezier2 );
+			scene.add( curvaBezier3 );
+			//scene.add( curvePoints3 );
 			scene.add( circulo );
 			scene.add( circulo2 );
-			scene.add( plano );
+			//scene.add( plano );
 		  	camera.position.z =  15;
 			
 		  	camera.lookAt( origin );
