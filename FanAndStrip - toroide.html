@@ -7,8 +7,7 @@
     </style>
   </head>
   <body>
-    <script src="js/three.js"></script>
-	<script src="js/controls/OrbitControls.js"></script>
+    <script src="js/three.min.js"></script>
     <script>
 		var scene, aspect, camera, renderer, controls;
 		var startTime = Date.now();
@@ -26,7 +25,6 @@
 			  this.geometria.faces.push( new THREE.Face3(i-3,i-1,i) );
 			}
 			this.geometria.computeFaceNormals();
-			this.geometria.update();
 			var materialFan = new THREE.MeshBasicMaterial( { color: 0x3333DD, side:THREE.DoubleSide } );
 			var fan = new THREE.Mesh( this.geometria, materialFan );
 			scene.add( fan );
@@ -59,7 +57,6 @@
 			renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
-			controls = new THREE.OrbitControls( camera, renderer.domElement );
             				  
 			var size = 10;
 			var arrowSize = 1;
@@ -104,33 +101,34 @@
             var geometria = new THREE.Geometry();
 			var geometria2 = new THREE.Geometry();
 			var radio = 1.0;
-			var res = 10.0;
+			var res = 30.0;
 			geometria.vertices.push( punto0 );
             for( var i = 0; i <= res; i++){
+				for( var j = 0; j <= res; j++){
                 var punto = new THREE.Vector3();
 				var punto2 = new THREE.Vector3();
 				var punto3 = new THREE.Vector3();
 				var punto4 = new THREE.Vector3();
-				punto.x = radio * Math.cos( ( 2 * Math.PI * i )/ res );
-                punto.y = 0;
-                punto.z = radio * Math.sin( ( 2 * Math.PI * i )/ res );
+				punto.x = radio * Math.cos( ( 2 * Math.PI * i )/ res )*(2+Math.cos( ( 2 * Math.PI * j )/ res ));
+                punto.y = radio * Math.sin( ( 2 * Math.PI * i )/ res )*(2+Math.cos( ( 2 * Math.PI * j )/ res ));
+                punto.z = radio * Math.sin( ( 2 * Math.PI * j )/ res );
 				
-				punto2.x = punto.x;
-				punto2.y = 1;
-				punto2.z = punto.z;
-				punto3.x = 2 * Math.cos( ( 2 * Math.PI * i )/ res );
-				punto3.y = 1;
-				punto3.z = 2 * Math.sin( ( 2 * Math.PI * i )/ res );
-				punto4.x = 2 * Math.cos( ( 2 * Math.PI * i )/ res );
-				punto4.y = 0;
-				punto4.z = 2 * Math.sin( ( 2 * Math.PI * i )/ res );
+				//punto2.x = punto.x;
+				//punto2.y = 1;
+				//punto2.z = punto.z;
+				//punto3.x = 2 * Math.cos( ( 2 * Math.PI * i )/ res );
+				//punto3.y = 1;
+				//punto3.z = 2 * Math.sin( ( 2 * Math.PI * i )/ res );
+				//punto4.x = 2 * Math.cos( ( 2 * Math.PI * i )/ res );
+				//punto4.y = 0;
+				//punto4.z = 2 * Math.sin( ( 2 * Math.PI * i )/ res );
 				
 				//geometria.vertices.push( punto );
 				geometria2.vertices.push( punto );
-				geometria2.vertices.push( punto2 );
-				geometria2.vertices.push( punto3 );
-				geometria2.vertices.push( punto4 );
-            }
+				//geometria2.vertices.push( punto2 );
+				//geometria2.vertices.push( punto3 );
+				//geometria2.vertices.push( punto4 );
+            }}
 			
 			fan = new TRIANGLE_FAN(geometria);	
 			fan.draw();
