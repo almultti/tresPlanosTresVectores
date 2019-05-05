@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ovalo</title>
+    <meta name="viewport" content="width=device-width">
+    <meta content="text/html">
+    <link href="styles.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <canvas id="glcanvas" width="600" height="600">
+      Tu navegador no soporta el elemento <code>&lt;canvas&gt;</code> de HTML5.
+    </canvas>
+
+    <script name="shader" data-src="shaders/vertex.glsl" data-type="vertex" data-version="v1"></script>
+    <script name="shader" data-src="shaders/fragment.glsl" data-type="fragment" data-version="v1"></script>
+
+    <script type="text/javascript" src="vendor/js/signals.js"></script>
+    <script type="text/javascript" src="libs/glUtils.js"></script>
+    <script type="text/javascript" src="index2.js"></script>
+  </body>
+</html>
