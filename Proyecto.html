@@ -1,0 +1,674 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>Proyecto Nemo</title>
+	</head>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+	<div id="about"></div>
+    <script src="js/three.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+	<script>
+		var scene, aspect, anem, camera, camera2, camera3, renderer, controls;
+		var frustumSize = 5;
+		 var mapWidth = 250, mapHeight = 150;
+		var w = window.innerWidth, h = window.innerHeight;
+		var startTime = Date.now();
+		
+		init();
+		animate();
+	
+		function init(){
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0xB404AE );
+			aspect = window.innerWidth / window.innerHeight;
+			camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+				  
+			var size = 10;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA3333 );
+		  	var colorG = new THREE.Color( 0x33AA33 );
+		  	var colorB = new THREE.Color( 0x333366 );
+		  
+		  	//Crear grillas
+		  	var axesHelper = new THREE.AxesHelper( size );
+		  	var gridHelperXY = new THREE.GridHelper( size, divisions, color1, color1);
+		  	var gridHelperXY2 = new THREE.GridHelper( size, divisions, color1, color1);
+			var gridHelperXY3 = new THREE.GridHelper( size, divisions, color1, color1);
+			var gridHelperXY4 = new THREE.GridHelper( size, divisions, color1, color1);
+            
+			
+            //Rotar grillas
+            gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+			gridHelperXY2.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+			gridHelperXY3.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+			gridHelperXY4.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+			gridHelperXY2.position.x = -11;
+			gridHelperXY3.position.x = 11;
+			gridHelperXY4.position.y = -15;
+            
+            //Flechas Coordenadas 3D
+            var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+            var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+            var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+			
+			//Camaras
+			camera2 = new THREE.OrthographicCamera( frustumSize * aspect / - 2 , 
+                                                    frustumSize * aspect / 2,    
+                                                    frustumSize / 2+2,             
+                                                    frustumSize / - 2,           
+                                                    1,                           
+                                                    100 );
+			var helper = new THREE.CameraHelper( camera2 );
+			
+			camera3 = new THREE.OrthographicCamera( frustumSize * aspect / - 2 , 
+                                                    frustumSize * aspect / 2,    
+                                                    frustumSize / 2,             
+                                                    frustumSize / - 2,           
+                                                    1,                           
+                                                    100 );
+			var helper2 = new THREE.CameraHelper( camera3 );
+			
+			camera4 = new THREE.OrthographicCamera( frustumSize * aspect / - 2 , 
+                                                    frustumSize * aspect / 2,    
+                                                    frustumSize / 2,             
+                                                    frustumSize / - 2,           
+                                                    1,                           
+                                                    100 );
+			
+			camera5 = new THREE.OrthographicCamera( frustumSize * aspect / - 2 , 
+                                                    frustumSize * aspect / 2,    
+                                                    frustumSize / 2,             
+                                                    frustumSize / - 2,           
+                                                    1,                           
+                                                    100 );
+
+			var effectController  = {
+                frustum: 7,
+                nearPlane: -4,
+                farPlane: 10,
+                aspect: w/h,
+            };
+			
+			var matChanger = function( ) {
+                frustumSize = effectController.frustum;
+                aspect = effectController.aspect;
+                camera2.frustum = frustumSize;
+                camera2.left   = - frustumSize * aspect / 2-12;
+                camera2.right  =   frustumSize * aspect / 2-12;
+                camera2.top    =   frustumSize / 2;
+                camera2.bottom = - frustumSize / 2;
+                camera2.near = effectController.nearPlane;
+                camera2.far = effectController.farPlane;
+
+                camera2.updateProjectionMatrix();
+                helper.update();
+            };
+			var matChanger2 = function( ) {
+                frustumSize = effectController.frustum;
+                aspect = effectController.aspect;
+                camera3.frustum = frustumSize;
+                camera3.left   = - frustumSize * aspect / 2;
+                camera3.right  =   frustumSize * aspect / 2;
+                camera3.top    =   frustumSize / 2;
+                camera3.bottom = - frustumSize / 2;
+                camera3.near = effectController.nearPlane;
+                camera3.far = effectController.farPlane;
+
+                camera3.updateProjectionMatrix();
+                helper2.update();
+            };
+			var matChanger3 = function( ) {
+				
+                frustumSize = effectController.frustum;
+                aspect = effectController.aspect;
+                camera4.frustum = frustumSize;
+                camera4.left   = - frustumSize * aspect / 2+13;
+                camera4.right  =   frustumSize * aspect / 2+13;
+                camera4.top    =   frustumSize / 2;
+                camera4.bottom = - frustumSize / 2;
+                camera4.near = effectController.nearPlane;
+                camera4.far = effectController.farPlane;
+
+                camera4.updateProjectionMatrix();
+            };
+			
+			var matChanger4 = function( ) {
+				nearPlane = -2;
+                frustumSize = effectController.frustum;
+                aspect = effectController.aspect;
+                camera5.frustum = frustumSize;
+                camera5.left   = - frustumSize * aspect / 2-9;
+                camera5.right  =   frustumSize * aspect / 2-9;
+                camera5.top    =   frustumSize / 2+1;
+                camera5.bottom = - frustumSize / 2+1;
+                camera5.near = effectController.nearPlane;
+                camera5.far = effectController.farPlane;
+
+                camera5.updateProjectionMatrix();
+            };
+			
+			matChanger();
+			matChanger2();
+			matChanger3(); 
+			matChanger4(); 
+			
+			
+		
+            //Linea
+			var geoLinea = new THREE.Geometry();
+			geoLinea.vertices.push(new THREE.Vector3( -2.5,  3.0,  0.0 ) );
+			geoLinea.vertices.push(new THREE.Vector3(  1.0,  2.0,  0.0 ) );
+          		  
+			//anem
+		   var geometryanem = new THREE.BoxGeometry( 2, 2, 5);
+            var materialanem = new THREE.MeshPhongMaterial({color:0x3F8CFC});
+		   anem = new THREE.Mesh(geometryanem,materialanem);
+		   var ax=10, ay=-5, az=4;
+			var a = new THREE.Matrix4();		
+			a.set( 	1, 0, 0, ax,
+					0, 1, 0, ay, 
+					0, 0, 1, az,
+					0, 0, 0, 1	);
+			anem.applyMatrix(a);
+					
+			
+		   
+			//Circulo
+			var geoCirculo = new THREE.CircleGeometry( 0.5, 32 );
+			var geoCirculo2 = new THREE.CircleGeometry( 0.2, 32 );
+			var geoCirculo3 = new THREE.CylinderGeometry( 5,5,5, 32 );
+			
+			//Curvas Bezier
+			var curve1 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( 3, 1, 0 ),
+                new THREE.Vector3( 0, 2.7, 0 ),
+				new THREE.Vector3( -3, 3, 0 ),
+				new THREE.Vector3( -3.2, 0, 0 )
+            );
+			var curve2 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 3, 0, 0 ),
+               new THREE.Vector3( 0, -0.4, 0 ),
+			   new THREE.Vector3( -2, -0.8, 0 ),
+			   new THREE.Vector3( -3.2, 0, 0 )
+            );
+			
+			
+			
+			var pointGeometry = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point = curve1.getPoint( i/20 );
+                pointGeometry.vertices.push( point );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point = curve2.getPoint( i/20 );
+                pointGeometry.vertices.push( point );
+            }
+			//geometry2
+			var curve3 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( -1, 0.5, 0 ),
+                new THREE.Vector3( 0, 0.5, 0 ),
+                new THREE.Vector3( 1, 1.5, 0 ),
+                new THREE.Vector3( 0.9, 0.5, 0),
+				
+            );
+			var curve4 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( -1, -0.5, 0 ),
+			   new THREE.Vector3( 0, -0.5, 0 ),
+			   new THREE.Vector3( 1, -1.5, 0 ),
+			   new THREE.Vector3( 0.9, -0.5, 0 )
+            );
+			
+			var pointGeometry2 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point2 = curve3.getPoint( i/20 );
+                pointGeometry2.vertices.push( point2 );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point2 = curve4.getPoint( i/20 );
+                pointGeometry2.vertices.push( point2 );
+            }
+			
+			//geometry3
+			var curve5 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( 0.4, 0.8, 0 ),
+                new THREE.Vector3( 1.5, 1.3, 0 ),
+                new THREE.Vector3( 1.7, 1, 0 ),
+                new THREE.Vector3( 1.8, 0.8, 0),
+				
+            );
+			var curve6 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 0.8, 0.4, 0 ),
+			   new THREE.Vector3( 1.2, 0, 0 ),
+			   new THREE.Vector3( 1.6, 0.4, 0 ),
+			   new THREE.Vector3( 1.8, 0.6, 0 )
+            );
+			
+			var pointGeometry3 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point3 = curve5.getPoint( i/20 );
+                pointGeometry3.vertices.push( point3 );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point3 = curve6.getPoint( i/20 );
+                pointGeometry3.vertices.push( point3 );
+            }
+			
+			//geometry5
+			var curve9 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( 1.5, 3.5, 0 ),
+                new THREE.Vector3( 3, 5, 0 ),
+                new THREE.Vector3( 3.8, 5, 0 ),
+                new THREE.Vector3( 5, 3.5, 0),
+				
+            );
+			var curve10 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 2, 3, 0 ),
+			   new THREE.Vector3( 1.5, 1, 0 ),
+			   new THREE.Vector3( 5.5, 1, 0 ),
+			   new THREE.Vector3( 5, 3, 0 )
+            );
+			
+			var pointGeometry5 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point5 = curve9.getPoint( i/20 );
+                pointGeometry5.vertices.push( point5 );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point5 = curve10.getPoint( i/20 );
+                pointGeometry5.vertices.push( point5 );
+            }
+			
+			//geometry8
+			var curve15 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( 1.5, 3.5, 0 ),
+                new THREE.Vector3( 3, 5, 0 ),
+                new THREE.Vector3( 3.8, 5, 0 ),
+                new THREE.Vector3( 5, 3.5, 0),
+				
+            );
+			var curve16 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 2, 3, 0 ),
+			   new THREE.Vector3( 1.5, 1, 0 ),
+			   new THREE.Vector3( 5.5, 1, 0 ),
+			   new THREE.Vector3( 5, 3, 0 )
+            );
+			
+			var pointGeometry8 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point8 = curve15.getPoint( i/20 );
+                pointGeometry8.vertices.push( point8 );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point8 = curve16.getPoint( i/20 );
+                pointGeometry8.vertices.push( point8 );
+            }
+			
+			//geometry6
+			var curve11 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( -1, 0.5, 0 ),
+                new THREE.Vector3( 0, 0.5, 0 ),
+                new THREE.Vector3( 1, 1.5, 0 ),
+                new THREE.Vector3( 0.9, 0.5, 0),
+				
+            );
+			var curve12 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( -1, -0.5, 0 ),
+			   new THREE.Vector3( 0, -0.5, 0 ),
+			   new THREE.Vector3( 1, -1.5, 0 ),
+			   new THREE.Vector3( 0.9, -0.5, 0 )
+            );
+			
+			var pointGeometry6 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point6 = curve11.getPoint( i/20 );
+                pointGeometry6.vertices.push( point6 );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point6 = curve12.getPoint( i/20 );
+                pointGeometry6.vertices.push( point6 );
+            }
+			
+			//geometry7 (circulobase)
+			var curve13 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( -1, 0.5, 0 ),
+                new THREE.Vector3( 0, 0.5, 0 ),
+                new THREE.Vector3( 1, 1.5, 0 ),
+                new THREE.Vector3( 0.9, 0.5, 0),
+				
+            );
+			var curve14 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( -1, -0.5, 0 ),
+			   new THREE.Vector3( 0, -0.5, 0 ),
+			   new THREE.Vector3( 1, -1.5, 0 ),
+			   new THREE.Vector3( 0.9, -0.5, 0 )
+            );
+			
+			
+			var pointGeometry7 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point7 = curve13.getPoint( i/20 );
+                pointGeometry7.vertices.push( point7 );
+            }
+			for(var i=0; i<20; i++){
+                var point7 = curve14.getPoint( i/20 );
+                pointGeometry7.vertices.push( point7 );
+            }
+			
+			//geometria 4
+			var curve7 = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( 1.5, 3, 0 ),
+                new THREE.Vector3( 2.5, 4.9, 0 ),
+                new THREE.Vector3( 3.5, 4.5, 0 ),
+                new THREE.Vector3( 4, 3, 0),
+				
+            );
+			var curve8 = new THREE.CubicBezierCurve3(
+               new THREE.Vector3( 1, 1, 0 ),
+			   new THREE.Vector3( 2, 0.5, 0 ),
+			   new THREE.Vector3( 3, 0.5, 0 ),
+			   new THREE.Vector3( 4, 1, 0 )
+            );
+			
+			var pointGeometry4 = new THREE.Geometry();
+            for(var i=0; i<20; i++){
+                var point4 = curve7.getPoint( i/20 );
+                pointGeometry4.vertices.push( point4 );
+            }
+            
+            for(var i=0; i<20; i++){
+                var point4 = curve8.getPoint( i/20 );
+                pointGeometry4.vertices.push( point4 );
+            }
+			
+			
+			
+			var pointMaterial = new THREE.PointsMaterial( { color: 0xECAD59 } );
+			var pointMaterial2 = new THREE.PointsMaterial( { color: 0x283747 } );
+            var curvePoints = new THREE.Points( pointGeometry, pointMaterial );
+			var curvePoints2 = new THREE.Points( pointGeometry2, pointMaterial );
+			var curvePoints3 = new THREE.Points( pointGeometry3, pointMaterial2 );
+			var curvePoints4 = new THREE.Points( pointGeometry4, pointMaterial2 );
+			var curvePoints5 = new THREE.Points( pointGeometry5, pointMaterial2 );
+			var curvePoints6 = new THREE.Points( pointGeometry6, pointMaterial2 );
+			var curvePoints7 = new THREE.Points( pointGeometry7, pointMaterial2 );
+			
+            for(var i=0; i<19; i++){
+                var face1 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry.faces.push( face1 );
+                var face2 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry.faces.push( face2 );
+            }
+			 for(var i=0; i<19; i++){
+                var face3 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry2.faces.push( face3 );
+                var face4 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry2.faces.push( face4 );
+            }
+			for(var i=0; i<19; i++){
+                var face5 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry3.faces.push( face5 );
+                var face6 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry3.faces.push( face6 );
+            }
+			for(var i=0; i<19; i++){
+                var face7 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry4.faces.push( face7 );
+                var face8 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry4.faces.push( face8 );
+            }
+			for(var i=0; i<19; i++){
+                var face9 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry5.faces.push( face9 );
+                var face10 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry5.faces.push( face10 );
+            }
+			for(var i=0; i<19; i++){
+                var face11 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry6.faces.push( face11 );
+                var face12 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry6.faces.push( face12 );
+            }
+			for(var i=0; i<19; i++){
+                var face13 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry7.faces.push( face13 );
+				var face14 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry7.faces.push( face14 );
+            }
+			for(var i=0; i<19; i++){
+                var face15 = new THREE.Face3( i, i+1, i+20 );
+                pointGeometry8.faces.push( face15 );
+				var face16 = new THREE.Face3( i+1, i+20, i+21 );
+                pointGeometry8.faces.push( face16 );
+            }
+			
+			
+            pointGeometry.computeFaceNormals();
+			pointGeometry2.computeFaceNormals();
+			pointGeometry3.computeFaceNormals();
+			pointGeometry4.computeFaceNormals();
+			pointGeometry5.computeFaceNormals();
+			pointGeometry6.computeFaceNormals();
+			pointGeometry7.computeFaceNormals();
+			pointGeometry8.computeFaceNormals();
+            pointGeometry.computeVertexNormals();
+            pointGeometry2.computeVertexNormals();
+			pointGeometry3.computeVertexNormals();
+			pointGeometry4.computeVertexNormals();
+			pointGeometry5.computeVertexNormals();
+			pointGeometry6.computeVertexNormals();
+			pointGeometry7.computeVertexNormals();
+			pointGeometry8.computeVertexNormals();
+			
+			
+			//Cilindro
+            var geoPlano = new THREE.CylinderGeometry( 0.5, 0.6, 9, 32 );
+			
+            //Anillo
+            var geoAnillo = new THREE.RingGeometry( 0.02, 0.1, 32 );
+			
+			//Iluminacion
+            var ambient = new THREE.AmbientLight( 0xFBE687, 2 );
+            scene.add( ambient );
+            
+            var pointLight = new THREE.PointLight( 0x3FFCD1, 1, 100 );
+            pointLight.position.set( 5, 5, -5 );
+            scene.add( pointLight );
+			
+			//Crear materiales
+			var matNaranja = new THREE.LineBasicMaterial( { color: 0xEE7321 } );
+			var matFucsia = new THREE.MeshStandardMaterial(  {color: 0xFA58F4 } );
+			var matNaranjaOs = new THREE.LineBasicMaterial( { color: 0xA74300 } );
+			var matBlanco = new THREE.MeshBasicMaterial( { color: color1 } );
+			var matCurvaBezier = new THREE.MeshStandardMaterial( { color: 0xFF9F20, side: THREE.DoubleSide } );
+			var matTriangulo = new THREE.MeshBasicMaterial( { color: 0xFFB452, side: THREE.DoubleSide } );
+			var matPlano = new THREE.MeshLambertMaterial( { color: 0xAC58FA, side: THREE.DoubleSide } );
+			var matPlano2 = new THREE.MeshStandardMaterial( { color: 0x9A2EFE, side: THREE.DoubleSide } );
+			
+
+			//Crear objetos
+			var linea = new THREE.Line( geoLinea, matNaranja );
+			var plano = new THREE.Mesh( geoPlano, matPlano ); var planoA = new THREE.Mesh( geoPlano, matPlano ); var planoB = new THREE.Mesh( geoPlano, matPlano );
+			var plano2 = new THREE.Mesh( geoPlano, matPlano ); var plano2A = new THREE.Mesh( geoPlano, matPlano ); var plano2B = new THREE.Mesh( geoPlano, matPlano );
+            var plano3 = new THREE.Mesh( geoPlano, matPlano ); var plano3A = new THREE.Mesh( geoPlano, matPlano ); var plano3B = new THREE.Mesh( geoPlano, matPlano );
+			var plano4 = new THREE.Mesh( geoPlano, matPlano2 ); var plano4A = new THREE.Mesh( geoPlano, matPlano2 ); var plano4B = new THREE.Mesh( geoPlano, matPlano2 );
+			var plano5 = new THREE.Mesh( geoPlano, matPlano2 ); var plano5A = new THREE.Mesh( geoPlano, matPlano2 ); var plano5B = new THREE.Mesh( geoPlano, matPlano2 );
+			var plano6 = new THREE.Mesh( geoPlano, matPlano2 ); var plano6A = new THREE.Mesh( geoPlano, matPlano2 ); var plano6B = new THREE.Mesh( geoPlano, matPlano2 );
+			var plano7 = new THREE.Mesh( geoPlano, matPlano2 ); var plano7A = new THREE.Mesh( geoPlano, matPlano2 ); var plano7B = new THREE.Mesh( geoPlano, matPlano2 );
+			var plano8 = new THREE.Mesh( geoPlano, matPlano2 ); var plano8A = new THREE.Mesh( geoPlano, matPlano2 ); var plano8B = new THREE.Mesh( geoPlano, matPlano2 );
+			var plano9 = new THREE.Mesh( geoPlano, matPlano2 ); var plano9A = new THREE.Mesh( geoPlano, matPlano2 ); var plano9B = new THREE.Mesh( geoPlano, matPlano2 );
+			var plano10 = new THREE.Mesh( geoPlano, matPlano ); var plano10A = new THREE.Mesh( geoPlano, matPlano ); var plano10B = new THREE.Mesh( geoPlano, matPlano );
+			var plano11 = new THREE.Mesh( geoPlano, matPlano ); var plano11A = new THREE.Mesh( geoPlano, matPlano ); var plano11B = new THREE.Mesh( geoPlano, matPlano );
+			var plano12 = new THREE.Mesh( geoPlano, matPlano ); var plano12A = new THREE.Mesh( geoPlano, matPlano ); var plano12B = new THREE.Mesh( geoPlano, matPlano );
+			var circulo = new THREE.Mesh( geoCirculo, matBlanco ); var circulo2 = new THREE.Mesh( geoCirculo2, matNaranja ); var circulo3 = new THREE.Mesh( geoCirculo, matBlanco );
+			var circulo4 = new THREE.Mesh( geoCirculo, matBlanco ); var circulo5 = new THREE.Mesh( geoCirculo, matBlanco );
+			var circuloA = new THREE.Mesh( geoCirculo, matBlanco ); var circulo2A = new THREE.Mesh( geoCirculo2, matNaranja ); var circulo3A = new THREE.Mesh( geoCirculo2, matNaranja );
+			var circulo4A = new THREE.Mesh( geoCirculo2, matNaranja ); var circulo5A = new THREE.Mesh( geoCirculo2, matNaranja );
+			var circuloBase = new THREE.Mesh( geoCirculo3, matFucsia ); var circuloBase2 = new THREE.Mesh( geoCirculo3, matFucsia ); var circuloBase3 = new THREE.Mesh( geoCirculo3, matFucsia );
+            var anillo = new THREE.Mesh( geoAnillo, matNaranjaOs );
+			var curvaBezier = new THREE.Mesh( pointGeometry, matCurvaBezier );
+			var curvaBezier2 = new THREE.Mesh( pointGeometry2, matCurvaBezier );
+			var curvaBezier3 = new THREE.Mesh( pointGeometry3, matTriangulo );
+			var curvaBezier4 = new THREE.Mesh( pointGeometry4, matCurvaBezier );
+			var curvaBezier5 = new THREE.Mesh( pointGeometry5, matCurvaBezier );
+			var curvaBezier6 = new THREE.Mesh( pointGeometry6, matCurvaBezier );
+			var curvaBezier7 = new THREE.Mesh( pointGeometry7, matCurvaBezier );
+			var curvaBezier8 = new THREE.Mesh( pointGeometry8, matCurvaBezier );
+			
+			
+			//Posicion objetos
+			circulo.position.x = -2; circulo.position.y = 0.8; circulo.position.z = 0.2;
+			circulo2.position.x = -1.9; circulo2.position.y = 0.9; circulo2.position.z = 0.23;
+			circulo3.position.x = -9.3; circulo3.position.y = 0.8; circulo3.position.z = 0.22;
+			circulo4.position.x = 10.3; circulo4.position.y = 1.5; circulo4.position.z = 0.22;
+			circulo5.position.x = 12; circulo5.position.y = 1.5; circulo5.position.z = 0.22;
+			circuloA.position.x = -10.5; circuloA.position.y = 0.8; circuloA.position.z = 0.2;
+			circulo2A.position.x = -10.5; circulo2A.position.y = 0.9; circulo2A.position.z = 0.23;
+			circulo3A.position.x = -9.3; circulo3A.position.y = 0.9; circulo3A.position.z = 0.23;
+			circulo4A.position.x = 10.3; circulo4A.position.y = 1.5; circulo4A.position.z = 0.3;
+			circulo5A.position.x = 12; circulo5A.position.y = 1.5; circulo5A.position.z = 0.3;
+			circuloBase.position.y = -4;
+			circuloBase.position.z = 0;
+			circuloBase.rotation.x = Math.PI/6;
+			circuloBase2.position.y = -4;
+			circuloBase2.position.z = 0;
+			circuloBase2.position.x = 11;
+			circuloBase2.rotation.x = Math.PI/6;
+            plano.position.x = 4;  planoA.position.x = -9; planoA.position.z = -1; planoB.position.x = 13;
+            plano.position.y = 2; planoB.position.y = 2; planoB.position.z = -1;
+			plano.position.z = -1; 
+			plano2.position.x = 1; plano2A.position.x = -10; plano2A.position.z = -1; plano2B.position.x = 17;
+            plano2.position.y = 2; plano2B.position.y = 2; plano2B.position.z = -1;
+			plano2.position.z = -1;
+			plano3.position.x = -5; plano3A.position.x = -16; plano3A.position.z = -1; plano12B.position.x = 1; plano12B.position.z = -1;
+            plano3.position.y = 2; plano3B.position.y = 2; plano3B.position.z = -1;
+			plano3.position.z = -1;
+			plano4.position.x = -4.7; plano4A.position.x = -15.7;plano4A.position.z = -1; plano3B.position.x = 7.3; plano3B.position.z = -1;
+            plano4.position.y = 2.5; plano4B.position.y = 2; plano4B.position.z = -1;
+			plano4.position.z = -1;
+			plano5.position.x = -3.5; plano5A.position.x = -14.5; plano5A.position.z = -1; plano4B.position.x = 7; plano4B.position.z = -1;
+            plano5.position.y = 1.8; plano5B.position.x = 2; plano5B.position.z = -1;
+			plano5.position.z = -1;
+			plano6.position.x = -2; plano6A.position.x = -13; plano6A.position.z = -1; plano5B.position.x = 10; plano5B.position.z = -1;
+            plano6.position.y = 1.8; plano6B.position.y = 2; plano6B.position.z = -1;
+			plano6.position.z = -1;
+			plano7.position.x = -1.2; plano7A.position.x = -12.2; plano7A.position.z = -1; plano6B.position.x = 11; plano6B.position.z = -1;
+            plano7.position.y = 3; plano7B.position.y = 2; plano7B.position.z = -1;
+			plano7.position.z = -1;
+			plano8.position.x = 1.8; plano8A.position.x = -9.2; plano8A.position.z = -1; plano7B.position.x = 14; plano7B.position.z = -1;
+            plano8.position.y = 2.3; plano8B.position.y = 2; plano8B.position.z = -1;
+			plano8.position.z = -1;
+			plano9.position.x = 2.9; plano9A.position.x = -8.1; plano9A.position.z = -1; plano8B.position.x = 16; plano8B.position.z = -1;
+            plano9.position.y = 2.3; plano9B.position.y = 2; plano9B.position.z = -1;
+			plano9.position.z = -1;
+			plano10.position.x = 0; plano10A.position.x = -11; plano10A.position.z = -1; plano9B.position.x = 12; plano9B.position.z = -1;
+            plano10.position.y = 2.3; plano10B.position.y = 2; plano10B.position.z = -1;
+			plano10.position.z = -1;
+			plano11.position.x = -2.6; plano11A.position.x = -13.6; plano11A.position.z = -1; plano10B.position.x = 9.4; plano10B.position.z = -1; 
+            plano11.position.y = 2.3; plano11B.position.y = 2; plano11B.position.z = -1;
+			plano11.position.z = -1;
+			plano12.position.x = 4.8; plano12A.position.x = -6.2; plano11B.position.x = 8;
+            plano12.position.y = 2.3; plano12B.position.y = 2;
+			plano12.position.z = -1;
+            anillo.position.x = -1.87;
+            anillo.position.y = 0.9;
+			anillo.position.z = -1;
+			
+			curvaBezier.position.z = 0.1; 
+			curvaBezier2.position.y = 0.5; curvaBezier2.position.z = 0.09; curvaBezier2.position.x = 4; 
+			curvaBezier3.position.y = -1; curvaBezier3.position.z = 0.25; curvaBezier3.position.x = -0.85;
+			curvaBezier4.position.y = -1.5; curvaBezier4.position.z = 0.1; curvaBezier4.position.x = -12.5;
+			curvaBezier5.position.y = -1.5; curvaBezier5.position.z = 0.1; curvaBezier5.position.x = 7.5;
+			curvaBezier6.position.y = 1.2; curvaBezier6.position.z = 0.1; curvaBezier6.position.x = 8.5;
+			curvaBezier6.rotation.z = 7*Math.PI/6;
+			curvaBezier7.position.y = 1.5; curvaBezier7.position.z = 0.1; curvaBezier7.position.x = 19;
+			curvaBezier8.position.y = -1.5; curvaBezier8.position.z = 0.1; curvaBezier8.position.x = 13;
+			curvePoints2.position.y = 0.5;
+			curvePoints2.position.z = 0.09;
+			curvePoints2.position.x = 4;
+			curvePoints3.position.y = -3;
+			
+		  	//Agregar
+		  	//scene.add( gridHelperXY, gridHelperXY2, gridHelperXY3 );	
+		  	scene.add( arrowX );	
+		  	scene.add( arrowY );	
+		  	scene.add( arrowZ );
+            scene.add( anillo );
+			scene.add( anem );
+			scene.add( curvaBezier, curvaBezier2, curvaBezier3, curvaBezier4, curvaBezier5, curvaBezier6, curvaBezier7, curvaBezier8 );
+			scene.add( circulo, circulo2, circulo3, circulo4, circulo5, circuloA, circulo2A, circulo3A, circulo4A, circulo5A );
+			scene.add( circuloBase, circuloBase2 );
+			scene.add( plano, plano2, plano3, plano4, plano5, plano6, plano7, plano8, plano9, plano10, plano11, plano12 );
+		  	scene.add( planoA, plano2A, plano3A, plano4A, plano5A, plano6A, plano7A, plano8A, plano9A, plano10A, plano11A, plano12A );
+			scene.add( planoB, plano2B, plano3B, plano4B, plano5B, plano6B, plano7B, plano8B, plano9B, plano10B, plano11B, plano12B );
+			camera.position.z =  30;
+			camera.position.y =  5;
+			camera.position.x =  5;
+			
+		  	camera.lookAt( origin );
+			}
+			
+		function animate(){
+			requestAnimationFrame( animate );
+			controls.update();
+			render();
+		}
+		
+		function render(){
+			var py=0.05;
+			var p = new THREE.Matrix4();
+			p.set( 	Math.cos(py), 0, Math.sin(py), 0,
+					0, 1, 0, 0, 
+					-Math.sin(py), 0, Math.cos(py), 0,
+					0, 0, 0, 1	);
+			
+							
+			anem.applyMatrix(p);
+		
+		    renderer.setViewport( 0, 0, w, h );
+            renderer.setScissor( 0, 0, w, h );
+			renderer.render( scene, camera );
+			renderer.setViewport( 0, 60, mapWidth, mapHeight );
+            renderer.setScissor( 0, 60, mapWidth, mapHeight );
+            renderer.setScissorTest( true );
+            renderer.render( scene, camera2 );
+			renderer.setViewport( 270, 60, mapWidth, mapHeight );
+            renderer.setScissor( 270, 60, mapWidth, mapHeight );
+            renderer.setScissorTest( true );
+            renderer.render( scene, camera3 );
+			renderer.setViewport( 810, 60, mapWidth, mapHeight );
+            renderer.setScissor( 810, 60, mapWidth, mapHeight );
+            renderer.setScissorTest( true );
+            renderer.render( scene, camera4 );
+			renderer.setViewport( 540, 60, mapWidth, mapHeight );
+            renderer.setScissor( 540, 60, mapWidth, mapHeight );
+            renderer.setScissorTest( true );
+            renderer.render( scene, camera5 );
+		}
+
+		
+    </script>
+  </body>
+</html>
